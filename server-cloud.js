@@ -274,6 +274,11 @@ app.get('/api/export/:surveyId', async (req, res) => {
   }
 });
 
+// 根路由 - 提供主页面
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '团队管理效能评估轮.html'));
+});
+
 // 管理后台页面
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
