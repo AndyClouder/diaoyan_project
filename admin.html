@@ -308,6 +308,7 @@
                         <p>状态：${survey.is_active ? '活跃' : '已关闭'}</p>
                         <button class="btn btn-primary" onclick="viewResults('${survey.survey_id}', '${survey.survey_name}')">查看结果</button>
                         <button class="btn btn-success" onclick="copyLink('${survey.survey_id}')">复制链接</button>
+                        <button class="btn btn-danger" onclick="deleteSurvey('${survey.survey_id}')">删除问卷</button>
                     `;
                     surveyList.appendChild(surveyCard);
                 });
@@ -518,6 +519,36 @@
             } catch (error) {
                 console.error('加载详细数据失败:', error);
                 alert('加载详细数据失败');
+            }
+        }
+        
+        // 删除问卷
+        async function deleteSurvey(surveyId) {
+            if (!confirm('确定要删除这个问卷及其所有数据吗？此操作不可恢复！')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/surveys/${surveyId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('问卷删除成功！');
+                    loadSurveys(); // 重新加载问卷列表
+                    // 如果当前正在查看被删除的问卷，清空显示
+                    if (currentSurveyId === surveyId) {
+                        currentSurveyId = null;
+                        document.getElementById('summarySection').classList.add('hidden');
+                        document.getElementById('detailsSection').classList.add('hidden');
+                    }
+                } else {
+                    const error = await response.json();
+                    alert('删除失败：' + (error.error || '未知错误'));
+                }
+            } catch (error) {
+                console.error('删除问卷失败:', error);
+                alert('删除问卷失败，请重试');
             }
         }
         

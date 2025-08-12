@@ -94,6 +94,23 @@ app.get('/api/surveys', async (req, res) => {
   }
 });
 
+// 删除问卷及其所有数据
+app.delete('/api/surveys/:surveyId', async (req, res) => {
+  const surveyId = req.params.surveyId;
+  
+  try {
+    // 删除评估数据
+    await pool.query('DELETE FROM assessments WHERE survey_id = $1', [surveyId]);
+    
+    // 删除问卷链接
+    await pool.query('DELETE FROM survey_links WHERE survey_id = $1', [surveyId]);
+    
+    res.json({ message: '问卷删除成功' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 提交评估数据
 app.post('/api/assessments', async (req, res) => {
   const {
