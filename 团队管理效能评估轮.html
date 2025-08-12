@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团队管理效能评估轮</title>
+    <style>
+        body {
+            font-family: 'Arial', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 0;
+        }
+        
+        .wheel-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .wheel-section {
+            flex: 1;
+            min-width: 400px;
+        }
+        
+        .assessment-form {
+            flex: 1;
+            min-width: 350px;
+        }
+        
+        .wheel {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .assessment-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .assessment-item h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .assessment-item p {
+            margin: 0 0 15px 0;
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .problem-description {
+            background: #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #fdcb6e;
+        }
+        
+        .problem-description p {
+            margin-bottom: 8px;
+            color: #2d3436;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .problem-description ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #2d3436;
+        }
+        
+        .problem-description li {
+            margin-bottom: 6px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .score-selector {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .score-option {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .score-option:hover {
+            border-color: #3498db;
+            transform: scale(1.1);
+        }
+        
+        .score-option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .score-option.low {
+            border-color: #e74c3c;
+        }
+        
+        .score-option.medium {
+            border-color: #f39c12;
+        }
+        
+        .score-option.high {
+            border-color: #27ae60;
+        }
+        
+        .score-option.selected.low {
+            background: #e74c3c;
+        }
+        
+        .score-option.selected.medium {
+            background: #f39c12;
+        }
+        
+        .score-option.selected.high {
+            background: #27ae60;
+        }
+        
+        .results-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+        }
+        
+        .results-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .improvement-areas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .improvement-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .improvement-item h4 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .improvement-item p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+        
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+            gap: 15px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+        
+        @media (max-width: 768px) {
+            .wheel-container {
+                flex-direction: column;
+            }
+            
+            .wheel-section {
+                min-width: auto;
+            }
+            
+            .wheel {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 团队管理效能评估轮</h1>
+            <p>请根据当前团队的实际情况，为每个维度打分（1=很弱，靠本能，5=非常好，有系统的工具方法）</p>
+        </div>
+        
+        <div class="wheel-container">
+            <div class="wheel-section">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>1-2分：阻碍，待建设</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12;"></div>
+                        <span>3分：待改进</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #27ae60;"></div>
+                        <span>4-5分：良好，继续深化</span>
+                    </div>
+                </div>
+                <canvas id="wheelCanvas" class="wheel" width="400" height="400"></canvas>
+            </div>
+            
+            <div class="assessment-form">
+                <div class="assessment-item">
+                    <h3>📊 项目进度透明度</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>想了解项目进度需要打电话或开会询问</li>
+                            <li>项目状态报告更新不及时，信息滞后</li>
+                            <li>无法直观看到各项目的实时状态</li>
+                            <li>项目延期往往是临时发现，缺乏预警</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="0">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>⚡ 需求响应速度</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>需求评估周期长，立项流程复杂</li>
+                            <li>需求在各部门间流转时间长</li>
+                            <li>优先级排序机制不清晰</li>
+                            <li>紧急需求难以快速插入处理</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="1">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>🤝 团队协作效率</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>跨团队沟通主要靠会议，效率低</li>
+                            <li>团队间依赖关系不透明</li>
+                            <li>信息孤岛现象，重复沟通多</li>
+                            <li>协作过程缺乏有效工具支撑</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="2">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>🎯 交付质量稳定性</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>项目延期频发，交付时间难预测</li>
+                            <li>测试阶段经常发现重大问题</li>
+                            <li>返工率高，影响后续项目</li>
+                            <li>质量标准执行不一致</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="3">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>🔍 问题发现及时性</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>问题往往在项目后期才暴露</li>
+                            <li>缺乏有效的风险预警机制</li>
+                            <li>团队成员不愿意主动汇报问题</li>
+                            <li>问题升级机制不够及时</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="4">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>📈 资源配置效率</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>人员工作饱和度不均，忙闲不均</li>
+                            <li>技能匹配度低，人岗不适</li>
+                            <li>资源调配决策缺乏数据支撑</li>
+                            <li>多项目资源冲突处理不及时</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="5">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>💡 持续改进能力</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>项目结束后缺乏复盘总结</li>
+                            <li>重复犯同样的错误</li>
+                            <li>改进建议落地执行困难</li>
+                            <li>团队缺乏主动改进的文化氛围</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="6">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-item">
+                    <h3>📢 信息传递有效性</h3>
+                    <div class="problem-description">
+                        <p><strong>现状问题：</strong></p>
+                        <ul>
+                            <li>重要信息传递层级多，容易失真</li>
+                            <li>会议过多但决策效率低</li>
+                            <li>关键信息更新不及时</li>
+                            <li>信息获取渠道分散，难以整合</li>
+                        </ul>
+                    </div>
+                    <div class="score-selector" data-dimension="7">
+                        <span class="score-option low" data-score="1">1</span>
+                        <span class="score-option low" data-score="2">2</span>
+                        <span class="score-option medium" data-score="3">3</span>
+                        <span class="score-option high" data-score="4">4</span>
+                        <span class="score-option high" data-score="5">5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h3>📋 评估结果分析</h3>
+            <p id="overallScore"></p>
+            <div class="improvement-areas" id="improvementAreas"></div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="generateReport()">生成分析报告</button>
+            <button class="btn btn-secondary" onclick="resetAssessment()">重新评估</button>
+        </div>
+        
+        <!-- 提交表单 -->
+        <div id="submitSection" style="display: none; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h3>📝 提交评估</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">姓名：</label>
+                <input type="text" id="respondentName" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" placeholder="请输入您的姓名">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">团队：</label>
+                <input type="text" id="respondentTeam" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" placeholder="请输入您的团队">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">备注（可选）：</label>
+                <textarea id="notes" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; height: 80px;" placeholder="请输入其他意见或建议"></textarea>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="submitAssessment()">提交评估</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dimensions = [
+            '项目进度透明度',
+            '需求响应速度', 
+            '团队协作效率',
+            '交付质量稳定性',
+            '问题发现及时性',
+            '资源配置效率',
+            '持续改进能力',
+            '信息传递有效性'
+        ];
+        
+        const scores = new Array(8).fill(0);
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function drawWheel() {
+            ctx.clearRect(0, 0, 400, 400);
+            
+            const centerX = 200;
+            const centerY = 200;
+            const maxRadius = 150;
+            
+            // 绘制同心圆
+            for (let i = 1; i <= 5; i++) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, (maxRadius / 5) * i, 0, 2 * Math.PI);
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // 添加分值标签
+                ctx.fillStyle = '#999';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(i.toString(), centerX + (maxRadius / 5) * i - 10, centerY - 5);
+            }
+            
+            // 绘制分割线和标签
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * 45 - 90) * Math.PI / 180;
+                const x = centerX + Math.cos(angle) * maxRadius;
+                const y = centerY + Math.sin(angle) * maxRadius;
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // 添加维度标签
+                const labelX = centerX + Math.cos(angle) * (maxRadius + 25);
+                const labelY = centerY + Math.sin(angle) * (maxRadius + 25);
+                
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // 分行显示长标签
+                const text = dimensions[i];
+                if (text.length > 6) {
+                    const midPoint = Math.ceil(text.length / 2);
+                    ctx.fillText(text.substring(0, midPoint), labelX, labelY - 8);
+                    ctx.fillText(text.substring(midPoint), labelX, labelY + 8);
+                } else {
+                    ctx.fillText(text, labelX, labelY);
+                }
+            }
+            
+            // 绘制评分多边形
+            if (scores.some(score => score > 0)) {
+                ctx.beginPath();
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i * 45 - 90) * Math.PI / 180;
+                    const radius = (scores[i] / 5) * maxRadius;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(52, 152, 219, 0.3)';
+                ctx.fill();
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // 绘制评分点
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i * 45 - 90) * Math.PI / 180;
+                    const radius = (scores[i] / 5) * maxRadius;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#3498db';
+                    ctx.fill();
+                }
+            }
+        }
+        
+        // 评分选择事件
+        document.querySelectorAll('.score-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const dimension = parseInt(this.closest('.score-selector').dataset.dimension);
+                const score = parseInt(this.dataset.score);
+                
+                // 更新选中状态
+                this.closest('.score-selector').querySelectorAll('.score-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                
+                // 更新分数
+                scores[dimension] = score;
+                
+                // 重绘图表
+                drawWheel();
+            });
+        });
+        
+        function generateReport() {
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            const averageScore = totalScore / 8;
+            
+            if (totalScore === 0) {
+                alert('请先完成评估！');
+                return;
+            }
+            
+            // 显示结果区域
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // 总体评分
+            const overallElement = document.getElementById('overallScore');
+            overallElement.innerHTML = `
+                <strong>总体评分：${averageScore.toFixed(1)}/5.0</strong>
+                <br>整体管理效能处于${getScoreLevel(averageScore)}水平
+            `;
+            
+            // 改进建议
+            const improvementAreas = document.getElementById('improvementAreas');
+            const lowScores = scores.map((score, index) => ({
+                dimension: dimensions[index],
+                score: score,
+                index: index
+            })).filter(item => item.score <= 3 && item.score > 0).sort((a, b) => a.score - b.score);
+            
+            if (lowScores.length > 0) {
+                improvementAreas.innerHTML = lowScores.map(item => `
+                    <div class="improvement-item">
+                        <h4>${item.dimension} (${item.score}/5)</h4>
+                        <p>${getImprovementSuggestion(item.index)}</p>
+                    </div>
+                `).join('');
+            } else {
+                improvementAreas.innerHTML = '<p style="text-align: center; color: #27ae60;">🎉 各维度表现良好，建议保持并持续优化！</p>';
+            }
+            
+            // 显示提交区域
+            document.getElementById('submitSection').style.display = 'block';
+            
+            // 滚动到结果区域
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function getScoreLevel(score) {
+            if (score >= 4) return '优秀';
+            if (score >= 3) return '良好';
+            if (score >= 2) return '一般';
+            return '待改进';
+        }
+        
+        function getImprovementSuggestion(dimensionIndex) {
+            const suggestions = [
+                '建议引入看板管理，让项目状态一目了然',
+                '可通过工作流优化和并行处理提升响应速度',
+                '建立跨团队协作机制，如每日站会和定期同步',
+                '完善质量管控流程，建立交付标准检查清单',
+                '建立风险预警机制，定期风险识别和评估',
+                '通过可视化工具优化资源分配和工作负荷管理',
+                '建立回顾会议制度，鼓励团队主动改进',
+                '优化信息流转机制，建立有效的沟通渠道'
+            ];
+            return suggestions[dimensionIndex];
+        }
+        
+        function resetAssessment() {
+            scores.fill(0);
+            document.querySelectorAll('.score-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('submitSection').style.display = 'none';
+            drawWheel();
+        }
+        
+        // 提交评估数据
+        async function submitAssessment() {
+            const respondentName = document.getElementById('respondentName').value.trim();
+            const respondentTeam = document.getElementById('respondentTeam').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+            
+            if (!respondentName) {
+                alert('请输入姓名');
+                return;
+            }
+            
+            // 获取URL参数中的surveyId
+            const urlParams = new URLSearchParams(window.location.search);
+            const surveyId = urlParams.get('survey') || 'default-survey';
+            
+            try {
+                const response = await fetch('/api/assessments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        surveyId,
+                        respondentName,
+                        respondentTeam,
+                        scores,
+                        notes
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('评估提交成功！感谢您的参与。');
+                    // 可以选择重置表单或跳转到感谢页面
+                    resetAssessment();
+                } else {
+                    alert('提交失败：' + result.error);
+                }
+            } catch (error) {
+                console.error('提交错误:', error);
+                alert('提交失败，请检查网络连接');
+            }
+        }
+        
+        // 初始化绘制
+        drawWheel();
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: team-assessment
+    env: node
+    buildCommand: npm install
+    startCommand: node server-cloud.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    disk:
+      name: data
+      mountPath: /opt/render/project/data
+      sizeGB: 1
+
+databases:
+  - name: assessment-db
+    databaseName: team_assessment
+    user: assessment_user
+    plan: free
