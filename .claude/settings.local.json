@@ -4,7 +4,11 @@
       "Bash(sudo npm:*)",
       "Bash(claude:*)",
       "Bash(npm install)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git config:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
