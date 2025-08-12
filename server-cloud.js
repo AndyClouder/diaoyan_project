@@ -279,10 +279,29 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '团队管理效能评估轮.html'));
 });
 
-// 管理后台页面
+// 登录页面
 app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// 管理后台页面（需要验证）
+app.get('/admin/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
+
+// 中间件：检查管理员登录状态
+function checkAdminAuth(req, res, next) {
+  // 简单的验证逻辑
+  const isAdmin = req.headers.authorization === 'Bearer admin-token-123';
+  
+  if (!isAdmin) {
+    return res.status(401).json({ error: '未授权访问' });
+  }
+  next();
+}
+
+// 受保护的管理API
+app.use('/api/admin', checkAdminAuth);
 
 // 启动服务器
 app.listen(PORT, () => {

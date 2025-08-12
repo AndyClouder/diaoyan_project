@@ -274,8 +274,19 @@
     <script>
         let currentSurveyId = null;
         
+        // 检查登录状态
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = '/admin';
+                return false;
+            }
+            return true;
+        }
+        
         // 页面加载时获取问卷列表
         window.onload = function() {
+            if (!checkLogin()) return;
             loadSurveys();
         };
         
