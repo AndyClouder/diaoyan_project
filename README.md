@@ -32,7 +32,7 @@ npm run dev
 ### 3. 访问系统
 
 - **管理后台**：http://localhost:3000/admin
-- **问卷页面**：http://localhost:3000/团队管理效能评估轮.html
+- **问卷页面**：http://localhost:3000/team-assessment.html
 
 ## 使用说明
 
@@ -80,7 +80,7 @@ diaoyan_project/
 ├── package.json              # 项目配置文件
 ├── server.js                 # 后端服务器
 ├── admin.html               # 管理后台页面
-├── 团队管理效能评估轮.html    # 问卷页面
+├── team-assessment.html       # 问卷页面
 ├── assessments.db            # 数据库文件（自动创建）
 └── node_modules/            # 依赖包
 ```

@@ -75,7 +75,7 @@ app.post('/api/surveys', async (req, res) => {
     res.json({ 
       surveyId, 
       surveyName,
-      surveyUrl: `${req.protocol}://${req.get('host')}/团队管理效能评估轮.html?survey=${surveyId}`
+      surveyUrl: `${req.protocol}://${req.get('host')}/team-assessment.html?survey=${surveyId}`
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -293,7 +293,7 @@ app.get('/api/export/:surveyId', async (req, res) => {
 
 // 根路由 - 提供主页面
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '团队管理效能评估轮.html'));
+  res.sendFile(path.join(__dirname, 'team-assessment.html'));
 });
 
 // 登录页面

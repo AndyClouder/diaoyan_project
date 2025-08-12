@@ -67,7 +67,7 @@ app.post('/api/surveys', (req, res) => {
             res.json({ 
                 surveyId, 
                 surveyName,
-                surveyUrl: `${req.protocol}://${req.get('host')}/index.html?survey=${surveyId}`
+                surveyUrl: `${req.protocol}://${req.get('host')}/team-assessment.html?survey=${surveyId}`
             });
         }
     );
