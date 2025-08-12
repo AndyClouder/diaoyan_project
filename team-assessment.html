@@ -259,17 +259,189 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            
             .wheel-container {
                 flex-direction: column;
+                gap: 20px;
             }
             
             .wheel-section {
                 min-width: auto;
+                order: 2;
+            }
+            
+            .assessment-form {
+                min-width: auto;
+                order: 1;
             }
             
             .wheel {
-                width: 300px;
-                height: 300px;
+                width: 280px;
+                height: 280px;
+            }
+            
+            .assessment-item {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .assessment-item h3 {
+                font-size: 15px;
+                margin-bottom: 8px;
+            }
+            
+            .problem-description {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .problem-description p {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            
+            .problem-description li {
+                font-size: 12px;
+                margin-bottom: 4px;
+                line-height: 1.3;
+            }
+            
+            .score-option {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+                font-size: 11px;
+            }
+            
+            .legend-item {
+                gap: 6px;
+            }
+            
+            .legend-color {
+                width: 12px;
+                height: 12px;
+            }
+            
+            .results-section {
+                margin-top: 20px;
+                padding: 15px;
+            }
+            
+            .results-section h3 {
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+            
+            .improvement-areas {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .improvement-item {
+                padding: 12px;
+            }
+            
+            .improvement-item h4 {
+                font-size: 13px;
+            }
+            
+            .improvement-item p {
+                font-size: 12px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 200px;
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+            
+            #submitSection {
+                margin-top: 20px;
+                padding: 15px;
+            }
+            
+            #submitSection h3 {
+                font-size: 16px;
+                margin-bottom: 12px;
+            }
+            
+            #submitSection label {
+                font-size: 13px;
+                margin-bottom: 3px;
+            }
+            
+            #submitSection input,
+            #submitSection textarea {
+                font-size: 13px;
+                padding: 6px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .header p {
+                font-size: 13px;
+            }
+            
+            .wheel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .assessment-item {
+                padding: 12px;
+            }
+            
+            .assessment-item h3 {
+                font-size: 14px;
+            }
+            
+            .problem-description {
+                padding: 10px;
+            }
+            
+            .score-option {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
             }
         }
     </style>
@@ -512,11 +684,15 @@
         const ctx = canvas.getContext('2d');
         
         function drawWheel() {
-            ctx.clearRect(0, 0, 400, 400);
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const canvasSize = canvas.width;
             
-            const centerX = 200;
-            const centerY = 200;
-            const maxRadius = 150;
+            ctx.clearRect(0, 0, canvasSize, canvasSize);
+            
+            const centerX = canvasSize / 2;
+            const centerY = canvasSize / 2;
+            const maxRadius = canvasSize * 0.375; // 150/400 = 0.375
             
             // 绘制同心圆
             for (let i = 1; i <= 5; i++) {
@@ -528,9 +704,11 @@
                 
                 // 添加分值标签
                 ctx.fillStyle = '#999';
-                ctx.font = '12px Arial';
+                const fontSize = Math.max(10, canvasSize * 0.03); // 响应式字体大小
+                ctx.font = `${fontSize}px Arial`;
                 ctx.textAlign = 'center';
-                ctx.fillText(i.toString(), centerX + (maxRadius / 5) * i - 10, centerY - 5);
+                const labelOffset = Math.max(8, canvasSize * 0.025); // 响应式偏移
+                ctx.fillText(i.toString(), centerX + (maxRadius / 5) * i - labelOffset, centerY - labelOffset);
             }
             
             // 绘制分割线和标签
@@ -744,8 +922,32 @@
             }
         }
         
+        // 响应式Canvas尺寸调整
+        function resizeCanvas() {
+            const canvas = document.getElementById('wheelCanvas');
+            const container = canvas.parentElement;
+            const containerWidth = container.offsetWidth;
+            
+            if (window.innerWidth <= 480) {
+                canvas.width = 250;
+                canvas.height = 250;
+            } else if (window.innerWidth <= 768) {
+                canvas.width = 280;
+                canvas.height = 280;
+            } else {
+                canvas.width = 400;
+                canvas.height = 400;
+            }
+            
+            // 重新绘制
+            drawWheel();
+        }
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', resizeCanvas);
+        
         // 初始化绘制
-        drawWheel();
+        resizeCanvas();
     </script>
 </body>
 </html>
