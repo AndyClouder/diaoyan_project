@@ -130,11 +130,48 @@
             font-weight: bold;
             transition: all 0.3s ease;
             background: white;
+            position: relative;
         }
         
         .score-option:hover {
             border-color: #3498db;
             transform: scale(1.1);
+        }
+        
+        .score-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+            max-width: 200px;
+            white-space: normal;
+            text-align: center;
+        }
+        
+        .score-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #2c3e50;
+        }
+        
+        .score-option:hover .score-tooltip {
+            opacity: 1;
+            visibility: visible;
         }
         
         .score-option.selected {
@@ -458,15 +495,41 @@
                 <div class="legend">
                     <div class="legend-item">
                         <div class="legend-color" style="background: #e74c3c;"></div>
-                        <span>1-2分：阻碍，待建设</span>
+                        <span>1-2分：阻碍</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background: #f39c12;"></div>
-                        <span>3分：待改进</span>
+                        <span>3分：建设</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background: #27ae60;"></div>
-                        <span>4-5分：良好，继续深化</span>
+                        <span>4-5分：优化</span>
+                    </div>
+                </div>
+                
+                <div class="score-criteria" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 12px;">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">📊 评分标准说明</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                        <div>
+                            <strong style="color: #e74c3c;">1分 - 混乱无序</strong><br>
+                            完全依赖本能反应，无任何流程或工具，问题频发且无法预测
+                        </div>
+                        <div>
+                            <strong style="color: #e74c3c;">2分 - 初步意识</strong><br>
+                            认识到问题存在，开始尝试一些零散方法，但执行不系统，效果有限
+                        </div>
+                        <div>
+                            <strong style="color: #f39c12;">3分 - 基础建立</strong><br>
+                            有基本流程和工具，团队能够执行，但不够成熟，需要持续改进
+                        </div>
+                        <div>
+                            <strong style="color: #27ae60;">4分 - 成熟稳定</strong><br>
+                            流程成熟，大部分团队能自觉执行，有数据支撑，效果稳定
+                        </div>
+                        <div>
+                            <strong style="color: #27ae60;">5分 - 卓越优化</strong><br>
+                            系统化方法，数据驱动决策，持续优化创新，成为行业标杆
+                        </div>
                     </div>
                 </div>
                 <canvas id="wheelCanvas" class="wheel" width="400" height="400"></canvas>
@@ -476,7 +539,7 @@
                 <div class="assessment-item">
                     <h3>📊 项目进度透明度</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>想了解项目进度需要打电话或开会询问</li>
                             <li>项目状态报告更新不及时，信息滞后</li>
@@ -485,18 +548,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="0">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">完全无透明度：项目状态黑盒，进度完全靠猜测，延期频繁且无预警</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">偶尔更新：有不定期报告，但信息滞后严重，无法反映真实情况</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">定期报告：有周报/月报，但需要主动询问，缺乏实时性</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">可视化看板：使用看板工具，项目状态透明，能及时发现风险</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">实时监控：自动化仪表盘，数据驱动，预警机制完善，主动管理</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>⚡ 需求响应速度</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>需求评估周期长，立项流程复杂</li>
                             <li>需求在各部门间流转时间长</li>
@@ -505,18 +583,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="1">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">极其缓慢：需求评估需要数周，流程繁琐，审批环节多</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">响应迟缓：需求立项需要1-2周，跨部门协调困难</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">基本响应：有标准化流程，一般需求1周内可启动</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">快速响应：需求评估1-3天，有优先级机制，紧急需求可快速处理</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">即时响应：需求当天评估，自动优先级排序，灵活调整资源</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>🤝 团队协作效率</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>跨团队沟通主要靠会议，效率低</li>
                             <li>团队间依赖关系不透明</li>
@@ -525,18 +618,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="2">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">严重割裂：团队各自为政，沟通几乎靠会议，信息传递严重失真</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">协作困难：有基础沟通渠道，但效率低下，依赖关系不清晰</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">基础协作：有定期会议和沟通机制，但协作工具和流程有待完善</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">高效协作：使用协作工具，依赖关系透明，沟通顺畅高效</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">无缝协作：自组织团队，信息完全透明，工具支撑完善，持续优化</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>🎯 交付质量稳定性</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>项目延期频发，交付时间难预测</li>
                             <li>测试阶段经常发现重大问题</li>
@@ -545,18 +653,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="3">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">极不稳定：延期频发，质量无保障，交付时间完全无法预测</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">问题较多：经常延期，测试阶段发现大量问题，返工率高</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">基本可控：有质量标准，但执行不一致，偶有延期和质量问题</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">稳定交付：质量流程成熟，交付时间可预测，问题及时发现</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">卓越质量：零缺陷交付，持续改进机制，预测准确率90%以上</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>🔍 问题发现及时性</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>问题往往在项目后期才暴露</li>
                             <li>缺乏有效的风险预警机制</li>
@@ -565,18 +688,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="4">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">问题潜伏：问题在最后阶段暴露，无预警机制，损失严重</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">发现滞后：问题发现较晚，团队不愿主动汇报，升级困难</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">基本监控：有定期检查，但预警机制不完善，响应不够及时</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">及时预警：风险监控机制完善，问题早期发现，快速响应</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">主动防范：预测性风险识别，自动化监控，持续优化预警体系</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>📈 资源配置效率</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>人员工作饱和度不均，忙闲不均</li>
                             <li>技能匹配度低，人岗不适</li>
@@ -585,18 +723,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="5">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">混乱配置：资源分配无序，忙闲严重不均，技能错配，冲突频发</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">低效配置：资源分配主要靠经验，缺乏数据支撑，冲突处理被动</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">基本合理：有基础资源规划，但灵活性不足，优化空间较大</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">高效配置：数据驱动决策，资源利用率高，冲突处理及时</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">最优配置：AI辅助资源规划，动态调整，预测性配置，持续优化</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>💡 持续改进能力</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>项目结束后缺乏复盘总结</li>
                             <li>重复犯同样的错误</li>
@@ -605,18 +758,33 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="6">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">无改进意识：项目无复盘，重复犯错，无改进文化，问题循环发生</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">改进困难：偶有复盘但流于形式，改进建议难落地，缺乏动力</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">初步改进：有回顾机制，改进建议部分执行，但效果不稳定</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">持续改进：完善的回顾机制，改进建议有效落地，形成改进循环</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">自驱优化：改进文化深入人心，创新机制完善，持续学习进化</div>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="assessment-item">
                     <h3>📢 信息传递有效性</h3>
                     <div class="problem-description">
-                        <p><strong>现状问题：</strong></p>
+                        <p><strong>典型问题：</strong></p>
                         <ul>
                             <li>重要信息传递层级多，容易失真</li>
                             <li>会议过多但决策效率低</li>
@@ -625,11 +793,26 @@
                         </ul>
                     </div>
                     <div class="score-selector" data-dimension="7">
-                        <span class="score-option low" data-score="1">1</span>
-                        <span class="score-option low" data-score="2">2</span>
-                        <span class="score-option medium" data-score="3">3</span>
-                        <span class="score-option high" data-score="4">4</span>
-                        <span class="score-option high" data-score="5">5</span>
+                        <span class="score-option low" data-score="1">
+                            1
+                            <div class="score-tooltip">严重失真：信息传递混乱，会议泛滥但无效，关键信息经常丢失</div>
+                        </span>
+                        <span class="score-option low" data-score="2">
+                            2
+                            <div class="score-tooltip">传递低效：信息层级过多容易失真，会议效率低，更新不及时</div>
+                        </span>
+                        <span class="score-option medium" data-score="3">
+                            3
+                            <div class="score-tooltip">基本有效：有基础沟通机制，但效率有待提升，信息整合困难</div>
+                        </span>
+                        <span class="score-option high" data-score="4">
+                            4
+                            <div class="score-tooltip">高效传递：信息渠道畅通，决策效率高，信息及时准确</div>
+                        </span>
+                        <span class="score-option high" data-score="5">
+                            5
+                            <div class="score-tooltip">智能信息：自动化信息流转，智能推送，决策支持系统完善</div>
+                        </span>
                     </div>
                 </div>
             </div>
