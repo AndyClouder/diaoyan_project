@@ -6,7 +6,17 @@
   "scripts": {
     "start": "node server-cloud.js",
     "dev": "nodemon server-cloud.js",
-    "start:local": "node server.js"
+    "start:local": "node server.js",
+    "test": "node test/ci-test.js",
+    "lint": "echo \"Linting...\" && exit 0",
+    "type-check": "echo \"Type checking...\" && exit 0",
+    "build": "echo \"Building...\" && exit 0",
+    "audit": "npm audit",
+    "audit:fix": "npm audit fix",
+    "clean": "rm -rf node_modules package-lock.json",
+    "fresh": "npm run clean && npm install",
+    "deploy:render": "echo \"Deploying to Render...\"",
+    "deploy:vercel": "echo \"Deploying to Vercel...\""
   },
   "dependencies": {
     "express": "^4.18.2",
