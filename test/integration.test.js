@@ -9,10 +9,14 @@ describe('Team Assessment Integration Tests', () => {
     const TEST_DB_FILE = 'test_integration.db';
 
     beforeAll(async () => {
+        // 设置测试环境变量
+        process.env.NODE_ENV = 'test';
+        process.env.PORT = '3002';
+        
         // 设置测试数据库
         testDb = new sqlite3.Database(TEST_DB_FILE);
         
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve) => {
             testDb.serialize(() => {
                 testDb.run(`
                     CREATE TABLE IF NOT EXISTS assessments (

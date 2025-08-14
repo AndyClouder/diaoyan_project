@@ -55,6 +55,16 @@ db.serialize(() => {
 // 创建新的问卷链接
 app.post('/api/surveys', (req, res) => {
     const { surveyName } = req.body;
+    
+    // 验证输入数据
+    if (!surveyName || surveyName.trim() === '') {
+        return res.status(400).json({ error: '调查名称不能为空' });
+    }
+    
+    if (surveyName.length > 100) {
+        return res.status(400).json({ error: '调查名称不能超过100个字符' });
+    }
+    
     const surveyId = uuidv4();
     
     db.run(
@@ -64,7 +74,7 @@ app.post('/api/surveys', (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            res.json({ 
+            res.status(201).json({ 
                 surveyId, 
                 surveyName,
                 surveyUrl: `${req.protocol}://${req.get('host')}/team-assessment.html?survey=${surveyId}`
@@ -93,6 +103,19 @@ app.post('/api/assessments', (req, res) => {
         notes
     } = req.body;
     
+    // 验证输入数据
+    if (!surveyId || !respondentName || !respondentTeam || !scores) {
+        return res.status(400).json({ error: '缺少必要字段' });
+    }
+    
+    if (!Array.isArray(scores) || scores.length !== 8) {
+        return res.status(400).json({ error: '评分数组必须包含8个元素' });
+    }
+    
+    if (scores.some(score => score < 1 || score > 5)) {
+        return res.status(400).json({ error: '评分必须在1-5之间' });
+    }
+    
     const overallScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
     
     db.run(
@@ -114,7 +137,7 @@ app.post('/api/assessments', (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            res.json({ 
+            res.status(201).json({ 
                 id: this.lastID,
                 message: '评估提交成功！'
             });
@@ -271,10 +294,12 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-// 启动服务器
-app.listen(PORT, () => {
-    console.log(`服务器运行在 http://localhost:${PORT}`);
-    console.log(`管理后台: http://localhost:${PORT}/admin`);
-});
+// 启动服务器（仅在非测试环境）
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`服务器运行在 http://localhost:${PORT}`);
+        console.log(`管理后台: http://localhost:${PORT}/admin`);
+    });
+}
 
 module.exports = app;
