@@ -8,6 +8,13 @@
     "dev": "nodemon server-cloud.js",
     "start:local": "node server.js",
     "test": "node test/ci-test.js",
+    "test:unit": "jest test/unit.test.js",
+    "test:api": "jest test/api.test.js",
+    "test:integration": "jest test/integration.test.js",
+    "test:e2e": "jest test/e2e.test.js",
+    "test:all": "jest test/",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "lint": "echo \"Linting...\" && exit 0",
     "type-check": "echo \"Type checking...\" && exit 0",
     "build": "echo \"Building...\" && exit 0",
@@ -19,17 +26,25 @@
     "deploy:vercel": "echo \"Deploying to Vercel...\""
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "exceljs": "^4.3.0",
     "express": "^4.18.2",
     "pg": "^8.11.3",
-    "cors": "^2.8.5",
-    "uuid": "^9.0.0",
-    "exceljs": "^4.3.0",
-    "dotenv": "^16.3.1"
+    "puppeteer": "^24.16.1",
+    "sqlite3": "^5.1.7",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "jest": "^30.0.5",
+    "nodemon": "^3.0.1",
+    "supertest": "^7.1.4"
   },
-  "keywords": ["assessment", "survey", "team-management"],
+  "keywords": [
+    "assessment",
+    "survey",
+    "team-management"
+  ],
   "author": "Your Name",
   "license": "MIT"
 }

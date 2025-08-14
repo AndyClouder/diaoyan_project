@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-08-14T06:41:54.918Z",
+  "duration": 34095,
+  "results": {
+    "unit": {
+      "passed": 0,
+      "failed": 0,
+      "total": 0
+    },
+    "api": {
+      "passed": 0,
+      "failed": 0,
+      "total": 0
+    },
+    "integration": {
+      "passed": 0,
+      "failed": 0,
+      "total": 0
+    },
+    "e2e": {
+      "passed": 0,
+      "failed": 0,
+      "total": 0
+    }
+  },
+  "summary": {
+    "totalPassed": 0,
+    "totalFailed": 0,
+    "totalTests": 0
+  }
+}
