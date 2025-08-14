@@ -145,22 +145,25 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 10px 14px;
+            padding: 14px 18px;
             border-radius: 16px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
-            white-space: nowrap;
+            white-space: normal;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-bottom: 12px;
-            max-width: 220px;
-            white-space: normal;
+            max-width: 280px;
+            min-width: 200px;
             text-align: center;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(12px);
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .score-tooltip::after {
@@ -169,9 +172,9 @@
             top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            border: 6px solid transparent;
+            border: 8px solid transparent;
             border-top-color: #667eea;
-            filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
+            filter: drop-shadow(0 3px 6px rgba(102, 126, 234, 0.3));
         }
         
         .score-option:hover .score-tooltip {
@@ -1110,6 +1113,108 @@
             }
         }
         
+        // 智能tooltip定位功能
+        function setupSmartTooltips() {
+            const scoreOptions = document.querySelectorAll('.score-option');
+            
+            scoreOptions.forEach(option => {
+                const tooltip = option.querySelector('.score-tooltip');
+                if (!tooltip) return;
+                
+                option.addEventListener('mouseenter', function(e) {
+                    positionTooltip(tooltip, option);
+                });
+                
+                option.addEventListener('focus', function(e) {
+                    positionTooltip(tooltip, option);
+                });
+            });
+        }
+        
+        function positionTooltip(tooltip, option) {
+            const optionRect = option.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const margin = 20;
+            
+            // 重置tooltip样式
+            tooltip.style.position = 'absolute';
+            tooltip.style.bottom = '100%';
+            tooltip.style.left = '50%';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.style.top = 'auto';
+            tooltip.style.right = 'auto';
+            
+            // 检查是否会超出屏幕顶部
+            if (optionRect.top - tooltipRect.height - margin < 0) {
+                // 如果会超出顶部，显示在底部
+                tooltip.style.bottom = 'auto';
+                tooltip.style.top = '100%';
+                tooltip.style.marginBottom = '0';
+                tooltip.style.marginTop = '12px';
+                
+                // 调整箭头方向
+                tooltip.style.setProperty('--arrow-direction', 'bottom');
+            } else {
+                tooltip.style.marginBottom = '12px';
+                tooltip.style.marginTop = '0';
+                tooltip.style.setProperty('--arrow-direction', 'top');
+            }
+            
+            // 检查是否会超出屏幕左右边界
+            const tooltipLeft = optionRect.left + optionRect.width / 2 - tooltipRect.width / 2;
+            if (tooltipLeft < margin) {
+                // 如果会超出左边界，调整位置
+                tooltip.style.left = `${margin - optionRect.left}px`;
+                tooltip.style.transform = 'none';
+            } else if (tooltipLeft + tooltipRect.width > viewportWidth - margin) {
+                // 如果会超出右边界，调整位置
+                const rightSpace = viewportWidth - margin - (optionRect.left + optionRect.width);
+                tooltip.style.left = 'auto';
+                tooltip.style.right = `${rightSpace}px`;
+                tooltip.style.transform = 'none';
+            }
+            
+            // 添加箭头样式调整
+            updateTooltipArrow(tooltip);
+        }
+        
+        function updateTooltipArrow(tooltip) {
+            const arrowDirection = tooltip.style.getPropertyValue('--arrow-direction');
+            const existingStyle = tooltip.getAttribute('style') || '';
+            
+            // 移除现有的箭头样式
+            tooltip.style.setProperty('--arrow-top', 'none');
+            tooltip.style.setProperty('--arrow-bottom', 'none');
+            
+            if (arrowDirection === 'bottom') {
+                // 底部箭头
+                tooltip.style.setProperty('--arrow-bottom', `
+                    content: '';
+                    position: absolute;
+                    bottom: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border: 8px solid transparent;
+                    border-bottom-color: #667eea;
+                    filter: drop-shadow(0 -3px 6px rgba(102, 126, 234, 0.3));
+                `);
+            } else {
+                // 顶部箭头（默认）
+                tooltip.style.setProperty('--arrow-top', `
+                    content: '';
+                    position: absolute;
+                    top: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border: 8px solid transparent;
+                    border-top-color: #667eea;
+                    filter: drop-shadow(0 3px 6px rgba(102, 126, 234, 0.3));
+                `);
+            }
+        }
+        
         // 响应式Canvas尺寸调整
         function resizeCanvas() {
             const canvas = document.getElementById('wheelCanvas');
@@ -1136,6 +1241,9 @@
         
         // 初始化绘制
         resizeCanvas();
+        
+        // 初始化智能tooltip功能
+        setupSmartTooltips();
     </script>
 </body>
 </html>
