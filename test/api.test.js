@@ -386,5 +386,47 @@ describe('Team Assessment API Tests', () => {
                 .send('invalid json')
                 .expect(400);
         });
+
+        test('should return 400 if surveyName exceeds 100 characters', async () => {
+            const longName = 'a'.repeat(101);
+            const response = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: longName })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error', '调查名称不能超过100个字符');
+        });
+
+        test('should return 400 if assessment scores contain values outside 1-5 range', async () => {
+            const surveyResponse = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: 'Test Survey for Score Validation' });
+            
+            const surveyId = surveyResponse.body.surveyId;
+
+            const response = await request(app)
+                .post('/api/assessments')
+                .send({
+                    surveyId: surveyId,
+                    respondentName: 'Test User',
+                    respondentTeam: 'Test Team',
+                    scores: [1, 2, 3, 4, 5, 6, 7, 8], // 包含超出范围的分数
+                    notes: 'Test'
+                })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error', '评分必须在1-5之间');
+        });
+
+        test('should handle database errors gracefully', async () => {
+            // 模拟数据库错误 - 使用无效的survey_id来触发数据库错误
+            const response = await request(app)
+                .get('/api/summary/invalid-survey-id')
+                .expect(200);
+
+            // 即使survey_id不存在，也应该返回200但包含null值
+            expect(response.body).toHaveProperty('total_responses', 0);
+            expect(response.body.average_overall_score).toBeNull();
+        });
     });
 });
