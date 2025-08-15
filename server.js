@@ -183,6 +183,23 @@ app.get('/api/summary/:surveyId', (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
+            
+            // 处理空数据情况：确保返回一致的数据结构
+            if (!row) {
+                row = {
+                    total_responses: 0,
+                    average_overall_score: null,
+                    avg_project_progress: null,
+                    avg_requirement_response: null,
+                    avg_collaboration: null,
+                    avg_delivery_quality: null,
+                    avg_issue_discovery: null,
+                    avg_resource_allocation: null,
+                    avg_improvement: null,
+                    avg_information_transmission: null
+                };
+            }
+            
             res.json(row);
         }
     );
