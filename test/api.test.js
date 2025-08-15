@@ -426,6 +426,48 @@ describe('Team Assessment API Tests', () => {
             expect(response.body).toHaveProperty('error', '评分必须在1-5之间');
         });
 
+        test('should return 400 if scores array is not an array', async () => {
+            const surveyResponse = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: 'Test Survey for Invalid Scores' });
+            
+            const surveyId = surveyResponse.body.surveyId;
+
+            const response = await request(app)
+                .post('/api/assessments')
+                .send({
+                    surveyId: surveyId,
+                    respondentName: 'Test User',
+                    respondentTeam: 'Test Team',
+                    scores: 'invalid-scores', // 不是数组
+                    notes: 'Test'
+                })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error', '评分数组必须包含8个元素');
+        });
+
+        test('should return 400 if scores contain values less than 1', async () => {
+            const surveyResponse = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: 'Test Survey for Low Scores' });
+            
+            const surveyId = surveyResponse.body.surveyId;
+
+            const response = await request(app)
+                .post('/api/assessments')
+                .send({
+                    surveyId: surveyId,
+                    respondentName: 'Test User',
+                    respondentTeam: 'Test Team',
+                    scores: [0, 1, 2, 3, 4, 5, 1, 2], // 包含小于1的分数
+                    notes: 'Test'
+                })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error', '评分必须在1-5之间');
+        });
+
         test('should handle database errors gracefully', async () => {
             // 模拟数据库错误 - 使用无效的survey_id来触发数据库错误
             const response = await request(app)
@@ -435,6 +477,90 @@ describe('Team Assessment API Tests', () => {
             // 即使survey_id不存在，也应该返回200但包含null值
             expect(response.body).toHaveProperty('total_responses', 0);
             expect(response.body.average_overall_score).toBeNull();
+        });
+    });
+
+    describe('Admin Routes', () => {
+        test('should serve admin page', async () => {
+            const response = await request(app)
+                .get('/admin')
+                .expect(200);
+
+            expect(response.headers['content-type']).toContain('text/html');
+        });
+
+        test('should handle invalid surveyId in assessments route', async () => {
+            const response = await request(app)
+                .get('/api/assessments/non-existent-survey-id')
+                .expect(200);
+
+            expect(response.body).toEqual([]);
+        });
+
+        test('should handle survey name with only whitespace', async () => {
+            const response = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: '   ' })
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error', '调查名称不能为空');
+        });
+
+        test('should handle survey name with exactly 100 characters', async () => {
+            const exactName = 'a'.repeat(100);
+            const response = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: exactName })
+                .expect(201);
+
+            expect(response.body).toHaveProperty('surveyName', exactName);
+        });
+
+        test('should handle missing required fields in assessment', async () => {
+            const surveyResponse = await request(app)
+                .post('/api/surveys')
+                .send({ surveyName: 'Test Survey for Missing Fields' });
+            
+            const surveyId = surveyResponse.body.surveyId;
+
+            // 测试缺少surveyId
+            const response1 = await request(app)
+                .post('/api/assessments')
+                .send({
+                    respondentName: 'Test User',
+                    respondentTeam: 'Test Team',
+                    scores: [1, 2, 3, 4, 5, 1, 2, 3],
+                    notes: 'Test'
+                })
+                .expect(400);
+
+            expect(response1.body).toHaveProperty('error', '缺少必要字段');
+
+            // 测试缺少respondentName
+            const response2 = await request(app)
+                .post('/api/assessments')
+                .send({
+                    surveyId: surveyId,
+                    respondentTeam: 'Test Team',
+                    scores: [1, 2, 3, 4, 5, 1, 2, 3],
+                    notes: 'Test'
+                })
+                .expect(400);
+
+            expect(response2.body).toHaveProperty('error', '缺少必要字段');
+
+            // 测试缺少respondentTeam
+            const response3 = await request(app)
+                .post('/api/assessments')
+                .send({
+                    surveyId: surveyId,
+                    respondentName: 'Test User',
+                    scores: [1, 2, 3, 4, 5, 1, 2, 3],
+                    notes: 'Test'
+                })
+                .expect(400);
+
+            expect(response3.body).toHaveProperty('error', '缺少必要字段');
         });
     });
 });
