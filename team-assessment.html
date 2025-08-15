@@ -6,37 +6,42 @@
     <title>团队管理效能平衡轮</title>
     <style>
         body {
-            font-family: 'Arial', '微软雅黑', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f7;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.04);
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         
         .header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 28px;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
         
         .header p {
-            color: #7f8c8d;
-            font-size: 16px;
+            color: #86868b;
+            font-size: 17px;
             margin-bottom: 0;
+            font-weight: 400;
         }
         
         .wheel-container {
@@ -65,32 +70,61 @@
         }
         
         .assessment-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid #e5e5e7;
+            transition: all 0.2s ease;
+        }
+        
+        .assessment-item:hover {
+            border-color: #007aff;
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.08);
         }
         
         .assessment-item h3 {
-            margin: 0 0 10px 0;
-            color: #2c3e50;
-            font-size: 16px;
+            margin: 0 0 12px 0;
+            color: #1d1d1f;
+            font-size: 17px;
+            font-weight: 600;
         }
         
         .assessment-item p {
-            margin: 0 0 15px 0;
-            color: #7f8c8d;
+            margin: 0 0 16px 0;
+            color: #86868b;
+            font-size: 15px;
+            line-height: 1.47;
+        }
+        
+        .assessment-meaning {
+            background: #e8f4fd;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #b3d9f2;
+        }
+        
+        .assessment-meaning p {
+            margin: 0 0 8px 0;
+            color: #1a5490;
             font-size: 14px;
-            line-height: 1.4;
+            font-weight: 500;
+        }
+        
+        .assessment-meaning .meaning-detail {
+            color: #2c5aa0;
+            font-style: italic;
+            font-size: 13px;
+            margin: 0;
         }
         
         .problem-description {
-            background: #ffeaa7;
-            padding: 15px;
+            background: #fff9e6;
+            padding: 16px;
             border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #fdcb6e;
+            margin-bottom: 16px;
+            border: 1px solid #f9d791;
         }
         
         .problem-description p {
@@ -353,6 +387,20 @@
                 margin-bottom: 8px;
             }
             
+            .assessment-meaning {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .assessment-meaning p {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            
+            .assessment-meaning .meaning-detail {
+                font-size: 11px;
+            }
+            
             .problem-description {
                 padding: 12px;
                 margin-bottom: 12px;
@@ -479,8 +527,23 @@
                 font-size: 14px;
             }
             
+            .assessment-meaning {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+            
+            .assessment-meaning p {
+                font-size: 11px;
+                margin-bottom: 3px;
+            }
+            
+            .assessment-meaning .meaning-detail {
+                font-size: 10px;
+            }
+            
             .problem-description {
                 padding: 10px;
+                margin-bottom: 10px;
             }
             
             .score-option {
@@ -546,6 +609,10 @@
             <div class="assessment-form">
                 <div class="assessment-item">
                     <h3>📊 项目进度透明度</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>管理可控性、风险预防、信任建立、决策支撑</p>
+                        <p class="meaning-detail">核心价值：从"事后救火"转变为"事前预防"</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -581,6 +648,10 @@
                 
                 <div class="assessment-item">
                     <h3>⚡ 需求响应速度</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>市场竞争力、客户满意度、资源效率、团队士气</p>
+                        <p class="meaning-detail">核心价值：时间就是金钱，速度就是优势</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -616,6 +687,10 @@
                 
                 <div class="assessment-item">
                     <h3>🤝 团队协作效率</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>整体效能、知识共享、创新能力、冲突减少</p>
+                        <p class="meaning-detail">核心价值：从"各自为政"到"协同作战"</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -651,6 +726,10 @@
                 
                 <div class="assessment-item">
                     <h3>🎯 交付质量稳定性</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>品牌信誉、成本控制、客户留存、团队信心</p>
+                        <p class="meaning-detail">核心价值：质量是生命线，稳定是竞争力</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -686,6 +765,10 @@
                 
                 <div class="assessment-item">
                     <h3>🔍 问题发现及时性</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>损失控制、风险管理、持续改进、团队文化</p>
+                        <p class="meaning-detail">核心价值：将"亡羊补牢"变为"防患未然"</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -721,6 +804,10 @@
                 
                 <div class="assessment-item">
                     <h3>📈 资源配置效率</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>投资回报、员工满意度、项目成功率、组织弹性</p>
+                        <p class="meaning-detail">核心价值：让合适的人做合适的事</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -756,6 +843,10 @@
                 
                 <div class="assessment-item">
                     <h3>💡 持续改进能力</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>长期竞争力、学习型组织、创新基础、文化建设</p>
+                        <p class="meaning-detail">核心价值：今天比昨天好，明天比今天更好</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
@@ -791,6 +882,10 @@
                 
                 <div class="assessment-item">
                     <h3>📢 信息传递有效性</h3>
+                    <div class="assessment-meaning">
+                        <p><strong>评估意义：</strong>决策效率、执行准确性、组织敏捷性、协同效应</p>
+                        <p class="meaning-detail">核心价值：信息就是权力，传递就是效率</p>
+                    </div>
                     <div class="problem-description">
                         <p><strong>典型问题：</strong></p>
                         <ul>
