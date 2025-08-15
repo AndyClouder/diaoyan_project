@@ -383,7 +383,7 @@
                         <p>总响应数</p>
                     </div>
                     <div class="stat-card">
-                        <h3>${summary.average_overall_score ? summary.average_overall_score.toFixed(1) : '0'}</h3>
+                        <h3>${summary.average_overall_score !== null ? summary.average_overall_score.toFixed(1) : '-'}</h3>
                         <p>平均总体评分</p>
                     </div>
                 `;
@@ -400,74 +400,52 @@
             }
         }
         
-        // 绘制图表
-        function drawChart(summary) {
-            const canvas = document.getElementById('summaryChart');
-            const ctx = canvas.getContext('2d');
-            
-            const dimensions = [
-                '项目进度透明度',
-                '需求响应速度',
-                '团队协作效率',
-                '交付质量稳定性',
-                '问题发现及时性',
-                '资源配置效率',
-                '持续改进能力',
-                '信息传递有效性'
-            ];
-            
-            const data = [
-                summary.avg_project_progress || 0,
-                summary.avg_requirement_response || 0,
-                summary.avg_collaboration || 0,
-                summary.avg_delivery_quality || 0,
-                summary.avg_issue_discovery || 0,
-                summary.avg_resource_allocation || 0,
-                summary.avg_improvement || 0,
-                summary.avg_information_transmission || 0
-            ];
-            
-            // 清除画布
+        // 绘制空图表
+        function drawEmptyChart(ctx, canvas) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 设置图表参数
-            const padding = 40;
-            const chartWidth = canvas.width - 2 * padding;
-            const chartHeight = canvas.height - 2 * padding;
-            const barWidth = chartWidth / dimensions.length * 0.8;
-            const maxValue = 5;
-            
-            // 绘制坐标轴
+            ctx.fillStyle = '#666';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('暂无数据', canvas.width / 2, canvas.height / 2);
+        }
+        
+        // 绘制坐标轴
+        function drawAxes(ctx, canvas, config, chartWidth, chartHeight) {
             ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, canvas.height - padding);
-            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.moveTo(config.padding, config.padding);
+            ctx.lineTo(config.padding, canvas.height - config.padding);
+            ctx.lineTo(canvas.width - config.padding, canvas.height - config.padding);
             ctx.strokeStyle = '#333';
             ctx.lineWidth = 2;
             ctx.stroke();
-            
-            // 绘制Y轴刻度
+        }
+        
+        // 绘制网格线和刻度
+        function drawGridLines(ctx, canvas, config, chartWidth, chartHeight) {
             ctx.fillStyle = '#666';
             ctx.font = '12px Arial';
             ctx.textAlign = 'right';
-            for (let i = 0; i <= maxValue; i++) {
-                const y = canvas.height - padding - (i / maxValue) * chartHeight;
-                ctx.fillText(i.toString(), padding - 10, y + 4);
+            
+            for (let i = 0; i <= config.maxValue; i++) {
+                const y = canvas.height - config.padding - (i / config.maxValue) * chartHeight;
+                ctx.fillText(i.toString(), config.padding - 10, y + 4);
                 
                 // 绘制网格线
                 ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(canvas.width - padding, y);
+                ctx.moveTo(config.padding, y);
+                ctx.lineTo(canvas.width - config.padding, y);
                 ctx.strokeStyle = '#eee';
                 ctx.lineWidth = 1;
                 ctx.stroke();
             }
-            
-            // 绘制柱状图
-            data.forEach((value, index) => {
-                const x = padding + (index + 0.5) * (chartWidth / dimensions.length) - barWidth / 2;
-                const barHeight = (value / maxValue) * chartHeight;
-                const y = canvas.height - padding - barHeight;
+        }
+        
+        // 绘制柱状图
+        function drawBars(ctx, canvas, config, chartWidth, chartHeight, barWidth) {
+            config.data.forEach((value, index) => {
+                const x = config.padding + (index + 0.5) * (chartWidth / config.dimensions.length) - barWidth / 2;
+                const barHeight = (value / config.maxValue) * chartHeight;
+                const y = canvas.height - config.padding - barHeight;
                 
                 // 绘制柱子
                 ctx.fillStyle = '#3498db';
@@ -481,12 +459,65 @@
                 
                 // 绘制标签
                 ctx.save();
-                ctx.translate(x + barWidth / 2, canvas.height - padding + 15);
+                ctx.translate(x + barWidth / 2, canvas.height - config.padding + 15);
                 ctx.rotate(-Math.PI / 4);
                 ctx.textAlign = 'right';
-                ctx.fillText(dimensions[index], 0, 0);
+                ctx.fillText(config.dimensions[index], 0, 0);
                 ctx.restore();
             });
+        }
+        
+        // 绘制图表
+        function drawChart(summary) {
+            const canvas = document.getElementById('summaryChart');
+            const ctx = canvas.getContext('2d');
+            
+            // 检查是否有数据
+            if (summary.total_responses === 0) {
+                drawEmptyChart(ctx, canvas);
+                return;
+            }
+            
+            const chartConfig = {
+                dimensions: [
+                    '项目进度透明度',
+                    '需求响应速度',
+                    '团队协作效率',
+                    '交付质量稳定性',
+                    '问题发现及时性',
+                    '资源配置效率',
+                    '持续改进能力',
+                    '信息传递有效性'
+                ],
+                data: [
+                    summary.avg_project_progress || 0,
+                    summary.avg_requirement_response || 0,
+                    summary.avg_collaboration || 0,
+                    summary.avg_delivery_quality || 0,
+                    summary.avg_issue_discovery || 0,
+                    summary.avg_resource_allocation || 0,
+                    summary.avg_improvement || 0,
+                    summary.avg_information_transmission || 0
+                ],
+                padding: 40,
+                maxValue: 5
+            };
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const chartWidth = canvas.width - 2 * chartConfig.padding;
+            const chartHeight = canvas.height - 2 * chartConfig.padding;
+            const barWidth = chartWidth / chartConfig.dimensions.length * 0.8;
+            
+            // 绘制坐标轴
+            drawAxes(ctx, canvas, chartConfig, chartWidth, chartHeight);
+            
+            // 绘制Y轴刻度和网格线
+            drawGridLines(ctx, canvas, chartConfig, chartWidth, chartHeight);
+            
+            // 绘制柱状图
+            drawBars(ctx, canvas, chartConfig, chartWidth, chartHeight, barWidth);
         }
         
         // 加载详细数据
