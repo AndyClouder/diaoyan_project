@@ -20,7 +20,13 @@
       "Bash(npm run lint:*)",
       "Bash(npm run test:coverage:*)",
       "Bash(npm test)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run test:unit:*)",
+      "Bash(npm run test:api:*)",
+      "Bash(npx jest:*)",
+      "Bash(npm run test:all:*)",
+      "Bash(npm run test:integration:*)",
+      "Bash(npm test:*)"
     ],
     "deny": []
   }

@@ -76,9 +76,10 @@ describe('前台提交后后台查看功能测试', () => {
             notes: '第一个测试评估'
         };
 
-        await request(app)
+        const firstResponse = await request(app)
             .post('/api/assessments')
             .send(firstAssessment);
+        expect(firstResponse.status).toBe(201);
 
         // 提交第二个评估
         const secondAssessment = {
@@ -89,9 +90,10 @@ describe('前台提交后后台查看功能测试', () => {
             notes: '第二个测试评估'
         };
 
-        await request(app)
+        const secondResponse = await request(app)
             .post('/api/assessments')
             .send(secondAssessment);
+        expect(secondResponse.status).toBe(201);
 
         // 检查汇总数据
         const summaryResponse = await request(app)
