@@ -552,6 +552,28 @@
                 font-size: 13px;
             }
         }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -927,14 +949,9 @@
             <div class="improvement-areas" id="improvementAreas"></div>
         </div>
         
-        <div class="button-group">
-            <button class="btn btn-primary" onclick="generateReport()">生成分析报告</button>
-            <button class="btn btn-secondary" onclick="resetAssessment()">重新评估</button>
-        </div>
-        
-        <!-- 提交表单 -->
-        <div id="submitSection" style="display: none; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-            <h3>📝 提交评估</h3>
+        <!-- 信息输入表单 -->
+        <div id="infoSection" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h3>📝 您的信息</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">姓名：</label>
                 <input type="text" id="respondentName" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" placeholder="请输入您的姓名">
@@ -947,9 +964,11 @@
                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">备注（可选）：</label>
                 <textarea id="notes" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; height: 80px;" placeholder="请输入其他意见或建议"></textarea>
             </div>
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="submitAssessment()">提交评估</button>
-            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="generateAndSubmitReport()">生成分析报告并提交</button>
+            <button class="btn btn-secondary" onclick="resetAssessment()">重新评估</button>
         </div>
     </div>
 
@@ -1125,11 +1144,98 @@
                 improvementAreas.innerHTML = '<p style="text-align: center; color: #27ae60;">🎉 各维度表现良好，建议保持并持续优化！</p>';
             }
             
-            // 显示提交区域
-            document.getElementById('submitSection').style.display = 'block';
-            
             // 滚动到结果区域
             document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 生成报告并提交到数据库
+        async function generateAndSubmitReport() {
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            
+            if (totalScore === 0) {
+                alert('请先完成评估！');
+                return;
+            }
+            
+            const respondentName = document.getElementById('respondentName').value.trim();
+            const respondentTeam = document.getElementById('respondentTeam').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+            
+            if (!respondentName) {
+                alert('请输入姓名');
+                return;
+            }
+            
+            if (!respondentTeam) {
+                alert('请输入团队');
+                return;
+            }
+            
+            // 获取URL参数中的surveyId
+            const urlParams = new URLSearchParams(window.location.search);
+            const surveyId = urlParams.get('survey') || 'default-survey';
+            
+            try {
+                // 先生成报告显示给用户
+                generateReport();
+                
+                // 同时提交数据到后台
+                const response = await fetch('/api/assessments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        surveyId,
+                        respondentName,
+                        respondentTeam,
+                        scores,
+                        notes
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // 显示成功消息
+                    const successMessage = document.createElement('div');
+                    successMessage.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #27ae60;
+                        color: white;
+                        padding: 15px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        z-index: 10000;
+                        animation: slideIn 0.3s ease-out;
+                    `;
+                    successMessage.innerHTML = '✅ 分析报告已生成并成功提交！';
+                    document.body.appendChild(successMessage);
+                    
+                    // 3秒后自动移除消息
+                    setTimeout(() => {
+                        successMessage.style.animation = 'slideOut 0.3s ease-out';
+                        setTimeout(() => {
+                            document.body.removeChild(successMessage);
+                        }, 300);
+                    }, 3000);
+                    
+                    // 禁用提交按钮，防止重复提交
+                    const submitButton = document.querySelector('.btn-primary');
+                    submitButton.disabled = true;
+                    submitButton.textContent = '已提交';
+                    submitButton.style.opacity = '0.6';
+                    submitButton.style.cursor = 'not-allowed';
+                    
+                } else {
+                    alert('提交失败：' + result.error);
+                }
+            } catch (error) {
+                console.error('提交错误:', error);
+                alert('提交失败，请检查网络连接');
+            }
         }
         
         function getScoreLevel(score) {
@@ -1159,55 +1265,21 @@
                 option.classList.remove('selected');
             });
             document.getElementById('resultsSection').style.display = 'none';
-            document.getElementById('submitSection').style.display = 'none';
+            document.getElementById('respondentName').value = '';
+            document.getElementById('respondentTeam').value = '';
+            document.getElementById('notes').value = '';
+            
+            // 重新启用提交按钮
+            const submitButton = document.querySelector('.btn-primary');
+            submitButton.disabled = false;
+            submitButton.textContent = '生成分析报告并提交';
+            submitButton.style.opacity = '1';
+            submitButton.style.cursor = 'pointer';
+            
             drawWheel();
         }
         
-        // 提交评估数据
-        async function submitAssessment() {
-            const respondentName = document.getElementById('respondentName').value.trim();
-            const respondentTeam = document.getElementById('respondentTeam').value.trim();
-            const notes = document.getElementById('notes').value.trim();
             
-            if (!respondentName) {
-                alert('请输入姓名');
-                return;
-            }
-            
-            // 获取URL参数中的surveyId
-            const urlParams = new URLSearchParams(window.location.search);
-            const surveyId = urlParams.get('survey') || 'default-survey';
-            
-            try {
-                const response = await fetch('/api/assessments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        surveyId,
-                        respondentName,
-                        respondentTeam,
-                        scores,
-                        notes
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    alert('评估提交成功！感谢您的参与。');
-                    // 可以选择重置表单或跳转到感谢页面
-                    resetAssessment();
-                } else {
-                    alert('提交失败：' + result.error);
-                }
-            } catch (error) {
-                console.error('提交错误:', error);
-                alert('提交失败，请检查网络连接');
-            }
-        }
-        
         // 智能tooltip定位功能
         function setupSmartTooltips() {
             const scoreOptions = document.querySelectorAll('.score-option');
