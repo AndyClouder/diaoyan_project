@@ -470,6 +470,10 @@
         // 绘制图表
         function drawChart(summary) {
             const canvas = document.getElementById('summaryChart');
+            if (!canvas) {
+                console.error('找不到summaryChart canvas元素');
+                return;
+            }
             const ctx = canvas.getContext('2d');
             
             // 检查是否有数据
@@ -477,6 +481,17 @@
                 drawEmptyChart(ctx, canvas);
                 return;
             }
+            
+            const dimensionData = [
+                summary.avg_project_progress || 0,
+                summary.avg_requirement_response || 0,
+                summary.avg_collaboration || 0,
+                summary.avg_delivery_quality || 0,
+                summary.avg_issue_discovery || 0,
+                summary.avg_resource_allocation || 0,
+                summary.avg_improvement || 0,
+                summary.avg_information_transmission || 0
+            ];
             
             const chartConfig = {
                 dimensions: [
@@ -489,16 +504,7 @@
                     '持续改进能力',
                     '信息传递有效性'
                 ],
-                data: [
-                    summary.avg_project_progress || 0,
-                    summary.avg_requirement_response || 0,
-                    summary.avg_collaboration || 0,
-                    summary.avg_delivery_quality || 0,
-                    summary.avg_issue_discovery || 0,
-                    summary.avg_resource_allocation || 0,
-                    summary.avg_improvement || 0,
-                    summary.avg_information_transmission || 0
-                ],
+                data: dimensionData,
                 padding: 40,
                 maxValue: 5
             };
